@@ -8,7 +8,7 @@ const hash = bcrypt.hashSync(password, saltRounds)
 
 async function main() {
 
-  await prisma.user.create({
+  await prisma.superUser.create({
     
     data: {
       email: process.env.EMAIL,

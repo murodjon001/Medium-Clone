@@ -12,40 +12,87 @@ datasource db {
 
 enum Role {
   SUPER_USER
+  USER
+}
+
+model SuperUser {
+  id    String      @default(uuid()) @id
+  created_at  DateTime  @default(now())
+  updated_at DateTime   @updatedAt
+
+  email String      @unique
+  name  String?
+  password String
+  role  Role      @default(SUPER_USER)
 }
 
 model User {
   id    String      @default(uuid()) @id
+  created_at  DateTime  @default(now())
+  updated_at DateTime   @updatedAt
+  
   email String      @unique
   name  String?
   password String
+  is_active   Boolean   @default(false)
+  confirm_code    String
   posts Post[]      
-  role  Role      @default(SUPER_USER)
+  role  Role      @default(USER)
+  Comment Comment[]
+  LikePost    LikePost?
 }
 
 model Post {
   id        String     @default(uuid()) @id
   created_at  DateTime  @default(now())
-  updated_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
 
   title     String
   image     String?
   published Boolean @default(false)
   content String
+  like    Int?
   author    User?   @relation(fields: [authorId], references: [id])
   authorId  String?
   category  Category @relation(fields: [category_id], references: [id])
   category_id String
+  Comment   Comment[]
+  LikePost  LikePost[]
 }
 
 model Category {
   id String @default(uuid()) @id
   created_at  DateTime  @default(now())
-  updated_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
 
   title String
   Post  Post[]
-
-
 }
 
+model Comment {
+  id String @default(uuid()) @id
+  created_at  DateTime  @default(now())
+  updated_at DateTime   @updatedAt
+
+  description String
+  post        Post      @relation(fields: [post_id], references: [id])
+  post_id     String
+  user        User      @relation(fields: [user_id], references: [id])
+  user_id     String
+}
+
+model LikePost {
+  id String @default(uuid()) @id
+  created_at  DateTime  @default(now())
+  updated_at DateTime   @updatedAt
+
+  user  User    @relation(fields: [user_id], references: [id])
+  user_id   String  @unique
+  Posts   Post[]
+}
+
+// Har bir like qo'ygan foydalanuvchi like qo'ygan postini ko'rib borishi kerak. agar foydalanuvchi bir marta like qo'ysa like ikkinchi
+// marta bossa like o'chirilishi kerak. LikePost nomli alohida model yaratish lozim va Har bir user uchun bitta LikePost nomli model yaratiladi 
+// va har bir like qo'ygan posti uchun yangilanib boradi.
+
+// LikePOst nomli API ishlaganda POst modelidagi like nomli keyga bir qiymat yoki qo'shiladi yoki ayriladi
