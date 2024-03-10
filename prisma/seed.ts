@@ -1,30 +1,31 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+// import { SuperUserEntity } from '../src/bounded-contexts/administration/authentication/entity/superuser-entity';
 
 const saltRounds = 10;
 const password = process.env.PASSWORD 
-const hash = bcrypt.hashSync(password, saltRounds)
+const salt = bcrypt.genSaltSync(10); // Generate a salt with 10 rounds
+const hashedPassword = bcrypt.hashSync(password, salt)
+// const superUserEntity = new SuperUserEntity({
+//   email: process.env.EMAIL,
+//   confirmCode: "SUPER_USER",
+//   password: process.env.PASSWORD,
+//   name: process.env.NAME
+// })
 
+// superUserEntity.hashPassword()
+// console.log(superUserEntity)
 async function main() {
 
-  await prisma.superUser.create({
-    
+  await prisma.superuser.create({
     data: {
-      email: process.env.EMAIL,
-      name: process.env.NAME,
-      password: hash
+      confirmCode: "SUPER_USER",
+  email: process.env.EMAIL,
+  password: hashedPassword,
+  name: process.env.NAME
     },
   })
-  
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
