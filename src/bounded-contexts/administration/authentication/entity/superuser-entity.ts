@@ -30,7 +30,7 @@ export class SuperUserEntity {
         this.password = newPassword;
     }
     
-    validatePassword(password: string): Promise<boolean> {
+    validatePassword(password: string): boolean {
         return bcrypt.compareSync(password, this.password);
     }
 

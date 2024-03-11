@@ -1,12 +1,14 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SuperUserRepository } from 'src/infrastucture/prisma/repository/Superuser/superuser.repository';
 import { SuperUserEntity } from './entity/superuser-entity';
 import { ISuperUserTokenPayload, SUPER_USER_JWT_CONSTANTS } from 'src/infrastucture/security/constants';
 import { SuperUserDto } from './dto/superuser.dto';
+import { IAuthSuperUserService } from './types/IAuthSuperuserService';
+import { UpdateUserDto } from 'src/share/dtos/update-user.dto';
 
 @Injectable()
-export class AuthSuperUserService {
+export class AuthSuperUserService implements IAuthSuperUserService{
   logger = new Logger(AuthSuperUserService.name)
   constructor(
     private readonly jwtService: JwtService,
@@ -51,7 +53,7 @@ export class AuthSuperUserService {
     };
   }
 
-  async validateSuperUser(email: string, password: string) {
+  async validateSuperUser(email: string, password: string): Promise<SuperUserEntity> {
     const user = await this.superuserRepository.findByEmail(email)
     if (!user) {
       return null
@@ -97,4 +99,25 @@ export class AuthSuperUserService {
     }
   }
 
+  async updateSuperUser(dto: UpdateUserDto, id: string): Promise<string> {
+    const superuser = await this.superuserRepository.findById(id)
+    this.checkPassword(dto, superuser)
+    superuser.updatePassword(dto.newPassword)
+    superuser.hashPassword()
+    
+    await this.superuserRepository.save(superuser)
+    return 'success'
+  }
+
+  private checkPassword(dto: UpdateUserDto, entity: SuperUserEntity): void{
+    if(dto.confirmNewPassword !== dto.newPassword){
+      throw new BadRequestException('confirmPassword and newPassword is not the same!')
+    }
+    console.log(entity)
+    const validatePassword = entity.validatePassword(dto.oldPassword)
+
+    if(!validatePassword){
+      throw new ForbiddenException('oldPassword is not found database')
+    }
+  }
 }

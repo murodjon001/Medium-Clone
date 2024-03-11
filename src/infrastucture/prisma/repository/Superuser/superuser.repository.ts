@@ -45,4 +45,32 @@ export class SuperUserRepository implements ISuperUserRepository{
             throw new InternalServerErrorException()
         }
     }
+
+    async save(entity: SuperUserEntity): Promise<SuperUserEntity> {
+        try{
+            const superuser = await this.prisma.superuser.upsert({
+                where:{
+                    id: entity.id
+                },
+                create:{
+                    id: entity.id,
+                    confirmCode: entity.confirmCode,
+                    email: entity.email,
+                    password: entity.getHashPassword(),
+                    name: entity.name,
+                },
+                update:{
+                    confirmCode: entity.confirmCode,
+                    email: entity.email,
+                    password: entity.getHashPassword(),
+                    name: entity.name,
+                }
+            })
+
+            return new SuperUserEntity(superuser)
+        }catch(err){
+            this.logger.error(err)
+            throw new InternalServerErrorException()
+        }
+    }
 }
