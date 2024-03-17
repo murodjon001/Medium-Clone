@@ -3,7 +3,7 @@ import { AuthSuperUserService } from './auth-superuser.service';
 import { AuthSuperUserController } from './auth-user.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { SUPER_USER_JWT_CONSTANTS } from '../../../infrastucture/security/constants';
-import { SuperUserRepository } from 'src/infrastucture/prisma/repository/Superuser/superuser.repository';
+import { SuperUserRepository } from 'src/infrastucture/prisma/repository/superuser/superuser.repository';
 import { SuperUserLocalAuthStrategy } from 'src/infrastucture/security/strategy/superuser-local-strategy';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from 'src/infrastucture/prisma/prisma.module';
@@ -20,11 +20,11 @@ import { SuperUserJwtAuthStrategy } from 'src/infrastucture/security/strategy/su
     }),
   ],
   providers: [
-    AuthSuperUserService, 
-    JwtService, 
+    AuthSuperUserService,
+    JwtService,
     SuperUserRepository,
     SuperUserLocalAuthStrategy,
-    SuperUserJwtAuthStrategy
+    SuperUserJwtAuthStrategy,
   ],
   controllers: [AuthSuperUserController],
   exports: [JwtModule],

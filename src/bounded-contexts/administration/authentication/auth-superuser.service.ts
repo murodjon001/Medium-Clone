@@ -1,28 +1,37 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SuperUserRepository } from 'src/infrastucture/prisma/repository/Superuser/superuser.repository';
+import { SuperUserRepository } from 'src/infrastucture/prisma/repository/superuser/superuser.repository';
 import { SuperUserEntity } from './entity/superuser-entity';
-import { ISuperUserTokenPayload, SUPER_USER_JWT_CONSTANTS } from 'src/infrastucture/security/constants';
+import {
+  IUserTokenPayload,
+  SUPER_USER_JWT_CONSTANTS,
+} from 'src/infrastucture/security/constants';
 import { SuperUserDto } from './dto/superuser.dto';
 import { IAuthSuperUserService } from './types/IAuthSuperuserService';
 import { UpdateUserDto } from 'src/share/dtos/update-user.dto';
 
 @Injectable()
-export class AuthSuperUserService implements IAuthSuperUserService{
-  logger = new Logger(AuthSuperUserService.name)
+export class AuthSuperUserService implements IAuthSuperUserService {
+  logger = new Logger(AuthSuperUserService.name);
   constructor(
     private readonly jwtService: JwtService,
-    private readonly superuserRepository: SuperUserRepository
+    private readonly superuserRepository: SuperUserRepository,
   ) {}
 
-  async findSuperUserById(id: string): Promise<SuperUserDto>{
-    const superUser = await this.superuserRepository.findById(id)
+  async findSuperUserById(id: string): Promise<SuperUserDto> {
+    const superUser = await this.superuserRepository.findById(id);
 
     if (!superUser) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException();
     }
 
-    return new SuperUserDto(superUser)
+    return new SuperUserDto(superUser);
   }
 
   login(superuser: SuperUserEntity): {
@@ -30,7 +39,7 @@ export class AuthSuperUserService implements IAuthSuperUserService{
     refreshToken: string;
     expiresIn: number;
   } {
-    const payload: ISuperUserTokenPayload = {
+    const payload: IUserTokenPayload = {
       sub: superuser.id,
       iat: Date.now(),
       expiresIn: Date.now() + 86400000,
@@ -53,18 +62,21 @@ export class AuthSuperUserService implements IAuthSuperUserService{
     };
   }
 
-  async validateSuperUser(email: string, password: string): Promise<SuperUserEntity> {
-    const user = await this.superuserRepository.findByEmail(email)
+  async validateSuperUser(
+    email: string,
+    password: string,
+  ): Promise<SuperUserEntity> {
+    const user = await this.superuserRepository.findByEmail(email);
     if (!user) {
-      return null
+      return null;
     }
-    const superUserEntity = new SuperUserEntity(user)
-    const validatePassword = superUserEntity.validatePassword(password)
+    const superUserEntity = new SuperUserEntity(user);
+    const validatePassword = superUserEntity.validatePassword(password);
 
     if (!validatePassword) {
-      return null
+      return null;
     }
-    return user
+    return user;
   }
 
   refreshToken(refreshToken: string): {
@@ -72,13 +84,13 @@ export class AuthSuperUserService implements IAuthSuperUserService{
     expiresIn: number;
   } {
     try {
-      const verifiedToken: ISuperUserTokenPayload = this.jwtService.verify(
+      const verifiedToken: IUserTokenPayload = this.jwtService.verify(
         refreshToken,
         {
           secret: SUPER_USER_JWT_CONSTANTS.refreshSecret,
         },
       );
-      const payload: ISuperUserTokenPayload = {
+      const payload: IUserTokenPayload = {
         sub: verifiedToken.sub,
         iat: Date.now(),
         expiresIn: Date.now() + 86400000,
@@ -95,29 +107,31 @@ export class AuthSuperUserService implements IAuthSuperUserService{
       };
     } catch (error) {
       this.logger.error(error);
-      throw new UnauthorizedException()
+      throw new UnauthorizedException();
     }
   }
 
   async updateSuperUser(dto: UpdateUserDto, id: string): Promise<string> {
-    const superuser = await this.superuserRepository.findById(id)
-    this.checkPassword(dto, superuser)
-    superuser.updatePassword(dto.newPassword)
-    superuser.hashPassword()
-    
-    await this.superuserRepository.save(superuser)
-    return 'success'
+    const superuser = await this.superuserRepository.findById(id);
+    this.checkPassword(dto, superuser);
+    superuser.updatePassword(dto.newPassword);
+    superuser.hashPassword();
+
+    await this.superuserRepository.save(superuser);
+    return 'success';
   }
 
-  private checkPassword(dto: UpdateUserDto, entity: SuperUserEntity): void{
-    if(dto.confirmNewPassword !== dto.newPassword){
-      throw new BadRequestException('confirmPassword and newPassword is not the same!')
+  private checkPassword(dto: UpdateUserDto, entity: SuperUserEntity): void {
+    if (dto.confirmNewPassword !== dto.newPassword) {
+      throw new BadRequestException(
+        'confirmPassword and newPassword is not the same!',
+      );
     }
-    console.log(entity)
-    const validatePassword = entity.validatePassword(dto.oldPassword)
+    console.log(entity);
+    const validatePassword = entity.validatePassword(dto.oldPassword);
 
-    if(!validatePassword){
-      throw new ForbiddenException('oldPassword is not found database')
+    if (!validatePassword) {
+      throw new ForbiddenException('oldPassword is not found database');
     }
   }
 }
