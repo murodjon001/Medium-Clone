@@ -1,16 +1,33 @@
-// import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
-// export class Password {
-//   private static hash: string;
+export class Password {
+  private readonly hash: string;
 
-//   static create(password: string): void {
-//     const salt = 10;
-//     this.hash = bcrypt.hashSync(password, salt);
-//   }
+  constructor(hash: string) {
+    this.hash = hash;
+  }
 
-//   static validatePassword(password: string): boolean {
-//     return bcrypt.compareSync(password, this.hash);
-//   }
+  static async create(password: string): Promise<Password> {
+    this.validate(password);
+    const salt = 10;
+    const hash = await bcrypt.hash(password, salt);
+    return new Password(hash);
+  }
 
-//   static setHash(hash)
-// }
+  private static validate(password: string): void {
+    if (password.length < 8) {
+      throw new Error('Password must be at least 8 characters long.');
+    }
+  }
+
+  static fromHash(hash: string): Password {
+    return new Password(hash);
+  }
+
+  async compare(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.hash);
+  }
+  getHash(): string {
+    return this.hash;
+  }
+}

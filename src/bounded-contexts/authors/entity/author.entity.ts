@@ -1,3 +1,4 @@
+import { Password } from "src/share/value-objects/password-vo";
 import { IAuthorEntityParams } from "../type/IAuthorEntityParams"
 import * as bcrypt from 'bcryptjs';
 
@@ -8,7 +9,7 @@ export class AuthorEntity{
 
     email: string
     name: string
-    password: string
+    password: Password
     isActive: boolean
     confirmCode?: string    
 
@@ -37,21 +38,5 @@ export class AuthorEntity{
 
     setLikePost(likePosts: []){
         this.likePost = likePosts
-    }
-
-    hashPassword(): void{
-        this.password = bcrypt.hashSync(this.password, 10)
-    }
-
-    updatePassword(newPassword: string): void {
-        this.password = newPassword;
-    }
-    
-    validatePassword(password: string): boolean {
-        return bcrypt.compareSync(password, this.password);
-    }
-
-    getHashPassword(): string{
-        return this.password;
     }
 }

@@ -7,6 +7,6 @@ export interface IAuthorAuthenticationService {
   loginAuthor(
     author: AuthorEntity,
   ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number }>;
-  updateAuthor(dto: UpdatePasswordDto, user: AuthorEntity): Promise<string>;
+  updatePasswordAuthor(dto: UpdatePasswordDto, user: AuthorEntity): Promise<string>;
 
 }

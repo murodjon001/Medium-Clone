@@ -6,6 +6,8 @@ import {
 import { IAuthorRepository } from './IAuthorRepository';
 import { PrismaService } from '../../prisma.service';
 import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { IPrismaAuthor } from '../../interface/IPrismaAuthor';
+import { Password } from 'src/share/value-objects/password-vo';
 
 @Injectable()
 export class AuthorRepository implements IAuthorRepository {
@@ -24,7 +26,7 @@ export class AuthorRepository implements IAuthorRepository {
         return null;
       }
 
-      return new AuthorEntity(author);
+      return this.mapAuhtorEntity(author);
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();
@@ -44,19 +46,19 @@ export class AuthorRepository implements IAuthorRepository {
           confirmCode: entity.confirmCode,
           email: entity.email,
           name: entity.name,
-          password: entity.password,
+          password: entity.password.getHash(),
           isActive: entity.isActive,
         },
         update: {
           confirmCode: entity.confirmCode,
           email: entity.email,
           name: entity.name,
-          password: entity.password,
+          password: entity.password.getHash(),
           isActive: entity.isActive,
         },
       });
 
-      return new AuthorEntity(saveAuthor);
+      return this.mapAuhtorEntity(saveAuthor);
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();
@@ -75,10 +77,16 @@ export class AuthorRepository implements IAuthorRepository {
         return null;
       }
 
-      return new AuthorEntity(author);
+      return this.mapAuhtorEntity(author);
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();
     }
+  }
+
+  private mapAuhtorEntity(payload: IPrismaAuthor) {
+    const password = new Password(payload.password);
+
+    return new AuthorEntity({ ...payload, password });
   }
 }
