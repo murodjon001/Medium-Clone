@@ -6,7 +6,7 @@ import { GetCurrentUser } from 'src/infrastucture/decorators/get-current-user';
 import { SuperUserEntity } from './entity/superuser-entity';
 import { SuperUserJwtAuthGuard } from 'src/infrastucture/security/guards/superuser-jwt-auth.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UpdateUserDto } from 'src/share/dtos/update-user.dto';
+import { UpdatePasswordDto } from 'src/share/dtos/update-password.dto';
 
 @Controller('superusers')
 export class AuthSuperUserController {
@@ -25,14 +25,16 @@ export class AuthSuperUserController {
   }
 
   @Post('refresh-token')
-  refreshToken(@Body() refreshToken: RefreshTokenDto){
-    return this.service.refreshToken(refreshToken.refreshToken)
+  refreshToken(@Body() refreshToken: RefreshTokenDto) {
+    return this.service.refreshToken(refreshToken.refreshToken);
   }
 
   @UseGuards(SuperUserJwtAuthGuard)
   @Post('update-password')
-  updatePassword(@Body() dto: UpdateUserDto, @GetCurrentUser() user: SuperUserEntity){
-    return this.service.updateSuperUser(dto, user.id)
+  updatePassword(
+    @Body() dto: UpdatePasswordDto,
+    @GetCurrentUser() user: SuperUserEntity,
+  ) {
+    return this.service.updateSuperUser(dto, user.id);
   }
 }
- 
