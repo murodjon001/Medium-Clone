@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthorRepository } from 'src/infrastucture/prisma/repository/author/author-repository';
@@ -14,14 +15,19 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UpdatePasswordDto } from 'src/share/dtos/update-password.dto';
 import { Password } from 'src/share/value-objects/password-vo';
+import { RegisterAuthorDto } from './dto/register.dto';
+import { randomCharacters } from 'src/share/tools/generate-random-characters';
+import { SendEmail } from 'src/infrastucture/mailer/send-mail';
 
 @Injectable()
 export class AuthorAuthenticationService
   implements IAuthorAuthenticationService
 {
+  logger = new Logger(AuthorAuthenticationService.name);
   constructor(
     private readonly authorRepository: AuthorRepository,
     private readonly jwtService: JwtService,
+    private readonly sendEmail: SendEmail,
   ) {}
   async validateAuthor(email: string, password: string): Promise<AuthorEntity> {
     const author = await this.authorRepository.findByEmail(email);
@@ -37,6 +43,28 @@ export class AuthorAuthenticationService
     }
 
     return new AuthorEntity(author);
+  }
+
+  async registerAuthor(dto: RegisterAuthorDto): Promise<string> {
+    const authorByEmail = await this.authorRepository.findByEmail(dto.email);
+
+    if (authorByEmail) {
+      throw new ForbiddenException('This email alredy exists');
+    }
+
+    const password = await Password.create(dto.password);
+    const confirmCode = randomCharacters();
+    const authorEntity = new AuthorEntity({
+      email: dto.email,
+      name: dto.name,
+      password: password,
+      isActive: false,
+      confirmCode,
+    });
+
+    await this.sendEmail.sendVerificationEmail(dto.email, confirmCode);
+    await this.authorRepository.save(authorEntity);
+    return 'A verification code has been sent to your email!';
   }
 
   async findAuthor(id: string): Promise<AuthorEntity> {
@@ -73,6 +101,38 @@ export class AuthorAuthenticationService
       refreshToken,
       expiresIn: new Date().getTime() + 86400000,
     };
+  }
+
+  refreshToken(refreshToken: string): {
+    accessToken: string;
+    expiresIn: number;
+  } {
+    try {
+      const verifiedToken: IUserTokenPayload = this.jwtService.verify(
+        refreshToken,
+        {
+          secret: AUTHOR_JWT_CONSTANTS.refreshSecret,
+        },
+      );
+      const payload: IUserTokenPayload = {
+        sub: verifiedToken.sub,
+        iat: Date.now(),
+        expiresIn: Date.now() + 86400000,
+      }; // 24h
+
+      const accessToken = this.jwtService.sign(payload, {
+        secret: AUTHOR_JWT_CONSTANTS.secret,
+        expiresIn: AUTHOR_JWT_CONSTANTS.expiresIn,
+      });
+
+      return {
+        accessToken,
+        expiresIn: new Date().getTime() + 86400000,
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new UnauthorizedException();
+    }
   }
 
   async updatePasswordAuthor(

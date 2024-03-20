@@ -5,7 +5,7 @@ import { SuperUserLocalAuthGuard } from 'src/infrastucture/security/guards/super
 import { GetCurrentUser } from 'src/infrastucture/decorators/get-current-user';
 import { SuperUserEntity } from './entity/superuser-entity';
 import { SuperUserJwtAuthGuard } from 'src/infrastucture/security/guards/superuser-jwt-auth.guard';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RefreshTokenDto } from '../../../share/dtos/refresh-token.dto';
 import { UpdatePasswordDto } from 'src/share/dtos/update-password.dto';
 
 @Controller('superusers')
