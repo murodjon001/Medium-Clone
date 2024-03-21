@@ -1,10 +1,11 @@
-export interface ISuperUserEntityParams{
-    id?: string
-    createdAt?: Date
-    updatedAt?: Date
+import { Password } from "src/share/value-objects/password-vo";
 
-    email: string
-    name?: string
-    password: string
-    confirmCode: string
+export interface ISuperUserEntityParams {
+  id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  confirmCode?: string;
+  email: string;
+  name?: string;
+  password: string;
 }

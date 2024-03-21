@@ -2,6 +2,7 @@ import { Password } from 'src/share/value-objects/password-vo';
 import { IAuthorEntityParams } from '../type/IAuthorEntityParams';
 import * as bcrypt from 'bcryptjs';
 import { uuid } from 'src/share/tools/uuid';
+import { UpdateAuthorDto } from '../authentication/dto/update-author.dto';
 
 export class AuthorEntity {
   id?: string;
@@ -30,15 +31,23 @@ export class AuthorEntity {
     this.confirmCode = params.confirmCode || undefined;
   }
 
-  setPosts(posts: []) {
+  blockAuthor(): void {
+    this.isActive = false;
+  }
+
+  updateAuthor(dto: UpdateAuthorDto): void {
+    this.name = dto.name;
+  }
+
+  setPosts(posts: []): void {
     this.posts = posts;
   }
 
-  setComments(comments: []) {
+  setComments(comments: []): void {
     this.comments = comments;
   }
 
-  setLikePost(likePosts: []) {
+  setLikePost(likePosts: []): void {
     this.likePost = likePosts;
   }
 }

@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AUTHOR_JWT_CONSTANTS } from 'src/infrastucture/security/constants';
 import { AuthorAuthenticationController } from './authentication/author-authentication.controller';
 import { SendEmail } from 'src/infrastucture/mailer/send-mail';
+import { AuthorAdministrationController } from './administration/author-administration.controller';
+import { AuthorAdministrationService } from './administration/author-administration.service';
 
 @Module({
   imports: [
@@ -24,7 +26,8 @@ import { SendEmail } from 'src/infrastucture/mailer/send-mail';
     AuthorLocalAuthStrategy,
     AuthorJwtAuthStrategy,
     SendEmail,
+    AuthorAdministrationService,
   ],
-  controllers: [AuthorAuthenticationController],
+  controllers: [AuthorAuthenticationController, AuthorAdministrationController],
 })
 export class AuthorModule {}

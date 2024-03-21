@@ -15,10 +15,10 @@ model Superuser {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime   @updatedAt
   
+  confirmCode    String?         @unique
   email String      @unique
   name  String?
   password String
-  confirmCode    String
 }
 
 model Author {
@@ -30,7 +30,7 @@ model Author {
   name  String
   password String
   isActive   Boolean   @default(false)
-  confirmCode    String
+  confirmCode    String         @unique
   posts Post[]      
   Comment Comment[]
   LikePost    LikePost?

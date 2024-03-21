@@ -2,16 +2,14 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { SUPER_USER_JWT_CONSTANTS } from '../constants';
-import { AuthSuperUserService } from 'src/bounded-contexts/administration/authentication/auth-superuser.service';
+import { AuthSuperUserService } from 'src/bounded-contexts/administration/authentication/superuser-authentication.service';
 
 @Injectable()
 export class SuperUserJwtAuthStrategy extends PassportStrategy(
-    Strategy,
-    'superuser-jwt'
-    ) {
-  constructor(
-    private readonly superuserService: AuthSuperUserService,
-  ) {
+  Strategy,
+  'superuser-jwt',
+) {
+  constructor(private readonly superuserService: AuthSuperUserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -19,9 +17,7 @@ export class SuperUserJwtAuthStrategy extends PassportStrategy(
     });
   }
   async validate(payload) {
-    const user = await this.superuserService.findSuperUserById(
-      payload.sub,
-    );
+    const user = await this.superuserService.findSuperUserById(payload.sub);
     if (!user) {
       return null;
     }

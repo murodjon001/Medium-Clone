@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { SignInDto } from '../../../share/dtos/sign-in.dto';
-import { AuthSuperUserService } from './auth-superuser.service';
+import { AuthSuperUserService } from './superuser-authentication.service';
 import { SuperUserLocalAuthGuard } from 'src/infrastucture/security/guards/superuser-local-auth.guard';
 import { GetCurrentUser } from 'src/infrastucture/decorators/get-current-user';
 import { SuperUserEntity } from './entity/superuser-entity';
 import { SuperUserJwtAuthGuard } from 'src/infrastucture/security/guards/superuser-jwt-auth.guard';
 import { RefreshTokenDto } from '../../../share/dtos/refresh-token.dto';
 import { UpdatePasswordDto } from 'src/share/dtos/update-password.dto';
+import { ForgotPasswordDto } from 'src/share/dtos/forgotPassword.dto';
+import { ResetPasswordDto } from 'src/share/dtos/reset-password.dto';
 
 @Controller('superusers')
 export class AuthSuperUserController {
@@ -36,5 +38,15 @@ export class AuthSuperUserController {
     @GetCurrentUser() user: SuperUserEntity,
   ) {
     return this.service.updateSuperUser(dto, user.id);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.service.forgotPassword(dto);
+  }
+
+  @Post('reset-password/:code')
+  resetPassword(@Body() dto: ResetPasswordDto, @Param('code') code: string) {
+    return this.service.resetPassword(code, dto);
   }
 }
