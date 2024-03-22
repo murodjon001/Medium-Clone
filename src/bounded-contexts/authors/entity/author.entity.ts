@@ -11,6 +11,8 @@ export class AuthorEntity {
 
   email: string;
   name: string;
+  surname: string;
+  aboutAuthor?: string;
   password: Password;
   isActive: boolean;
   confirmCode?: string;
@@ -18,6 +20,7 @@ export class AuthorEntity {
   posts = [];
   comments = [];
   likePost = [];
+  subcategory = [];
 
   constructor(params: IAuthorEntityParams) {
     this.id = params.id || uuid();
@@ -26,6 +29,8 @@ export class AuthorEntity {
 
     this.email = params.email;
     this.name = params.name;
+    this.surname = params.aboutAuthor;
+    this.aboutAuthor = params.aboutAuthor || undefined;
     this.password = params.password;
     this.isActive = params.isActive;
     this.confirmCode = params.confirmCode || undefined;
@@ -49,5 +54,9 @@ export class AuthorEntity {
 
   setLikePost(likePosts: []): void {
     this.likePost = likePosts;
+  }
+
+  setSubcategory(subcategory: []) {
+    this.subcategory = subcategory;
   }
 }

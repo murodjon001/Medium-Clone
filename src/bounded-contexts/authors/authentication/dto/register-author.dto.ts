@@ -1,5 +1,6 @@
 import {
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsStrongPassword,
   MaxLength,
@@ -21,6 +22,12 @@ export class RegisterAuthorDto {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(100)
+  @MinLength(1)
+  surname: string;
+
+  @IsNotEmpty()
+  @IsString()
   @IsStrongPassword({
     minLength: 8,
     minNumbers: 2,
@@ -28,4 +35,10 @@ export class RegisterAuthorDto {
     minSymbols: 1,
   })
   password: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  @MinLength(1)
+  aboutAuthor: string;
 }

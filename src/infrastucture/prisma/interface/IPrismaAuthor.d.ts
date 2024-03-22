@@ -6,5 +6,7 @@ export interface IPrismaAuthor {
   name: string;
   password: string;
   isActive: boolean;
+  surname: string;
+  aboutAuthor: string;
   confirmCode: string;
 }

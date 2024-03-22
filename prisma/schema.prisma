@@ -22,18 +22,21 @@ model Superuser {
 }
 
 model Author {
-  id          String      @default(uuid()) @id
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime   @updatedAt
+  id                                String                    @default(uuid()) @id
+  createdAt                         DateTime                  @default(now())
+  updatedAt                         DateTime                  @updatedAt
   
-  email String      @unique
-  name  String
-  password String
-  isActive   Boolean   @default(false)
-  confirmCode    String         @unique
-  posts Post[]      
-  Comment Comment[]
-  LikePost    LikePost?
+  email                             String                    @unique
+  name                              String              
+  surname                           String                    @default("not_set")
+  aboutAuthor                       String?
+  password                          String
+  isActive                          Boolean                   @default(false)
+  confirmCode                       String                    @unique
+  post                              Post[]      
+  comment                           Comment[]
+  likePost                          LikePost?
+  subcategory                       Subcategory[]
 }
 
 model Post {
@@ -55,12 +58,26 @@ model Post {
 }
 
 model Category {
-  id String @default(uuid()) @id
-  createdAt  DateTime  @default(now())
-  updatedAt DateTime   @updatedAt
+  id                        String                                   @default(uuid()) @id
+  createdAt                 DateTime                                 @default(now())
+  updatedAt                 DateTime                                 @updatedAt
 
-  title String
-  Post  Post[]
+  title                     String                                   @unique    
+  description               String?            
+  post                      Post[]
+  subcategory               Subcategory[]
+}
+
+model Subcategory {
+  id                        String                                   @default(uuid()) @id
+  createdAt                 DateTime                                 @default(now())
+  updatedAt                 DateTime                                 @updatedAt
+
+  title                     String                                   @unique
+  description               String?
+  category                  Category                                 @relation(fields: [categoryId], references: [id])
+  categoryId                String     
+  author                    Author[]
 }
 
 model Comment {
@@ -84,9 +101,3 @@ model LikePost {
   userId   String  @unique
   Posts   Post[]
 }
-
-// Har bir like qo'ygan foydalanuvchi like qo'ygan postini ko'rib borishi kerak. agar foydalanuvchi bir marta like qo'ysa like ikkinchi
-// marta bossa like o'chirilishi kerak. LikePost nomli alohida model yaratish lozim va Har bir user uchun bitta LikePost nomli model yaratiladi 
-// va har bir like qo'ygan posti uchun yangilanib boradi.
-
-// LikePOst nomli API ishlaganda POst modelidagi like nomli keyga bir qiymat yoki qo'shiladi yoki ayriladi

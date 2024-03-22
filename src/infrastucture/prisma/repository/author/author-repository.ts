@@ -50,7 +50,7 @@ export class AuthorRepository implements IAuthorRepository {
         return this.mapAuhtorEntity(el);
       });
 
-      return {data, total}
+      return { data, total };
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();
@@ -89,6 +89,8 @@ export class AuthorRepository implements IAuthorRepository {
           confirmCode: entity.confirmCode,
           email: entity.email,
           name: entity.name,
+          surname: entity.surname,
+          aboutAuthor: entity.aboutAuthor,
           password: entity.password.getHash(),
           isActive: entity.isActive,
         },
@@ -98,6 +100,8 @@ export class AuthorRepository implements IAuthorRepository {
           name: entity.name,
           password: entity.password.getHash(),
           isActive: entity.isActive,
+          surname: entity.surname,
+          aboutAuthor: entity.aboutAuthor,
         },
       });
 
