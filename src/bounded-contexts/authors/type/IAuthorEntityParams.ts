@@ -1,4 +1,4 @@
-import { Password } from "src/share/value-objects/password-vo";
+import { Password } from 'src/share/value-objects/password-vo';
 
 export interface IAuthorEntityParams {
   id?: string;
@@ -7,6 +7,8 @@ export interface IAuthorEntityParams {
 
   email: string;
   name: string;
+  surname: string;
+  aboutAuthor?: string;
   password: Password;
   isActive: boolean;
   confirmCode?: string;

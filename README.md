@@ -23,7 +23,11 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
+This project is a clone of the Medium platform. By registering through this platform, people can share their interests and knowledge with the community!
 
+Technically, this project is written in DDD (Domain Driven Design) architecture.
+
+Users of this project can use two different roles! 1- Role of common users. They can register on the platform, write posts, like and comment on posts. 2- Role - SuperAdmin, Super Admins can moderate posts created by authors (ordinary users) on the platform. Any content that does not comply with the Community Guidelines may be blocked!
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
@@ -61,13 +65,5 @@ $ npm run test:cov
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
 
 Nest is [MIT licensed](LICENSE).

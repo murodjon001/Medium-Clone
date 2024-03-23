@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -13,15 +14,21 @@ import {
   SUPER_USER_JWT_CONSTANTS,
 } from 'src/infrastucture/security/constants';
 import { SuperUserDto } from './dto/superuser.dto';
-import { IAuthSuperUserService } from './types/IAuthSuperuserService';
+import { IAuthenticationSuperUserService } from './types/IAuthenticationSuperuserService';
 import { UpdatePasswordDto } from 'src/share/dtos/update-password.dto';
+import { SendEmail } from 'src/infrastucture/mailer/send-mail';
+import { ForgotPasswordDto } from '../../../share/dtos/forgotPassword.dto';
+import { ResetPasswordDto } from 'src/share/dtos/reset-password.dto';
+import { Password } from 'src/share/value-objects/password-vo';
+import { randomCharacters } from 'src/share/tools/generate-random-characters';
 
 @Injectable()
-export class AuthSuperUserService implements IAuthSuperUserService {
+export class AuthSuperUserService implements IAuthenticationSuperUserService {
   logger = new Logger(AuthSuperUserService.name);
   constructor(
     private readonly jwtService: JwtService,
     private readonly superuserRepository: SuperUserRepository,
+    private readonly sendEmail: SendEmail,
   ) {}
 
   async findSuperUserById(id: string): Promise<SuperUserDto> {
@@ -76,6 +83,7 @@ export class AuthSuperUserService implements IAuthSuperUserService {
     if (!validatePassword) {
       return null;
     }
+
     return user;
   }
 
@@ -111,6 +119,38 @@ export class AuthSuperUserService implements IAuthSuperUserService {
     }
   }
 
+  async forgotPassword(dto: ForgotPasswordDto): Promise<string> {
+    const superuser = await this.superuserRepository.findByEmail(dto.email);
+
+    if (!superuser) {
+      throw new NotFoundException('Email not found');
+    }
+
+    await this.sendEmail.sendResetPasswordInstructions(
+      superuser.email,
+      superuser.confirmCode,
+    );
+
+    return 'Instruction send you email!';
+  }
+
+  async resetPassword(
+    code: string,
+    password: ResetPasswordDto,
+  ): Promise<string> {
+    const superuser = await this.superuserRepository.findByCode(code);
+
+    if (!superuser) {
+      throw new ForbiddenException('Invalid code!');
+    }
+    const newPassword = await Password.create(password.resetPassword);
+    superuser.password = newPassword.getHash();
+
+    await this.superuserRepository.save(superuser);
+
+    return 'success';
+  }
+
   async updateSuperUser(dto: UpdatePasswordDto, id: string): Promise<string> {
     const superuser = await this.superuserRepository.findById(id);
     this.checkPassword(dto, superuser);
@@ -127,7 +167,6 @@ export class AuthSuperUserService implements IAuthSuperUserService {
         'confirmPassword and newPassword is not the same!',
       );
     }
-    console.log(entity);
     const validatePassword = entity.validatePassword(dto.oldPassword);
 
     if (!validatePassword) {

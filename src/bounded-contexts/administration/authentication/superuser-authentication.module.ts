@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthSuperUserService } from './auth-superuser.service';
-import { AuthSuperUserController } from './auth-user.controller';
+import { AuthSuperUserService } from './superuser-authentication.service';
+import { AuthSuperUserController } from './superuser-authentication.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { SUPER_USER_JWT_CONSTANTS } from '../../../infrastucture/security/constants';
 import { SuperUserRepository } from 'src/infrastucture/prisma/repository/superuser/superuser.repository';
@@ -8,6 +8,7 @@ import { SuperUserLocalAuthStrategy } from 'src/infrastucture/security/strategy/
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from 'src/infrastucture/prisma/prisma.module';
 import { SuperUserJwtAuthStrategy } from 'src/infrastucture/security/strategy/superuser-jwt-strategy';
+import { SendEmail } from 'src/infrastucture/mailer/send-mail';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SuperUserJwtAuthStrategy } from 'src/infrastucture/security/strategy/su
     SuperUserRepository,
     SuperUserLocalAuthStrategy,
     SuperUserJwtAuthStrategy,
+    SendEmail,
   ],
   controllers: [AuthSuperUserController],
   exports: [JwtModule],

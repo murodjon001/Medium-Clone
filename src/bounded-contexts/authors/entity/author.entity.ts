@@ -1,42 +1,62 @@
-import { Password } from "src/share/value-objects/password-vo";
-import { IAuthorEntityParams } from "../type/IAuthorEntityParams"
+import { Password } from 'src/share/value-objects/password-vo';
+import { IAuthorEntityParams } from '../type/IAuthorEntityParams';
 import * as bcrypt from 'bcryptjs';
+import { uuid } from 'src/share/tools/uuid';
+import { UpdateAuthorDto } from '../authentication/dto/update-author.dto';
 
-export class AuthorEntity{
-    id?: string
-    createdAt?: Date
-    updatedAt?: Date
+export class AuthorEntity {
+  id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 
-    email: string
-    name: string
-    password: Password
-    isActive: boolean
-    confirmCode?: string    
+  email: string;
+  name: string;
+  surname: string;
+  aboutAuthor?: string;
+  password: Password;
+  isActive: boolean;
+  confirmCode?: string;
 
-    posts = []
-    comments = []
-    likePost = []
+  posts = [];
+  comments = [];
+  likePost = [];
+  subcategory = [];
 
-    constructor(params: IAuthorEntityParams){
-        this.id = params.id || undefined
-        this.createdAt = params.createdAt || undefined
-        this.updatedAt = params.updatedAt || undefined
+  constructor(params: IAuthorEntityParams) {
+    this.id = params.id || uuid();
+    this.createdAt = params.createdAt || new Date();
+    this.updatedAt = params.updatedAt || new Date();
 
-        this.email = params.email
-        this.password = params.password
-        this.isActive = params.isActive
-        this.confirmCode = params.confirmCode || undefined
-    }
+    this.email = params.email;
+    this.name = params.name;
+    this.surname = params.aboutAuthor;
+    this.aboutAuthor = params.aboutAuthor || undefined;
+    this.password = params.password;
+    this.isActive = params.isActive;
+    this.confirmCode = params.confirmCode || undefined;
+  }
 
-    setPosts(posts: []){
-        this.posts = posts
-    }
+  blockAuthor(): void {
+    this.isActive = false;
+  }
 
-    setComments(comments: []){
-        this.comments = comments
-    }
+  updateAuthor(dto: UpdateAuthorDto): void {
+    this.name = dto.name;
+  }
 
-    setLikePost(likePosts: []){
-        this.likePost = likePosts
-    }
+  setPosts(posts: []): void {
+    this.posts = posts;
+  }
+
+  setComments(comments: []): void {
+    this.comments = comments;
+  }
+
+  setLikePost(likePosts: []): void {
+    this.likePost = likePosts;
+  }
+
+  setSubcategory(subcategory: []) {
+    this.subcategory = subcategory;
+  }
 }

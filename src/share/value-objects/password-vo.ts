@@ -8,16 +8,9 @@ export class Password {
   }
 
   static async create(password: string): Promise<Password> {
-    this.validate(password);
     const salt = 10;
     const hash = await bcrypt.hash(password, salt);
     return new Password(hash);
-  }
-
-  private static validate(password: string): void {
-    if (password.length < 8) {
-      throw new Error('Password must be at least 8 characters long.');
-    }
   }
 
   static fromHash(hash: string): Password {
