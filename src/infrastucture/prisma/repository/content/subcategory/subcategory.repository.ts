@@ -3,27 +3,28 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { ISubcategoryRepository } from './ISubcategotyRepository';
 import { PrismaService } from 'src/infrastucture/prisma/prisma.service';
+import { SubcategoryEntity } from 'src/bounded-contexts/content/subcategory/entity/subcategory.entity';
+import { IPrismaSubcategory } from 'src/infrastucture/prisma/interface/IPrsimaSubcategory';
 import { PaginationDto } from 'src/share/dtos/pagination.dto';
 import { IPaginatedData } from 'src/share/interfaces/IPaginatedData';
-import { ICategoryRepository } from './ICategoryRepository';
-import { CategoryEntity } from 'src/bounded-contexts/content/category/entity/categoty.entity';
-import { IPrismaCategory } from 'src/infrastucture/prisma/interface/IPrismaCategory';
 
 @Injectable()
-export class CategoryRepository implements ICategoryRepository {
-  logger = new Logger(CategoryRepository.name);
+export class SubcategoryRepository implements ISubcategoryRepository {
+  logger = new Logger(SubcategoryRepository.name);
   constructor(private readonly prisma: PrismaService) {}
 
-  async save(entity: CategoryEntity): Promise<CategoryEntity> {
+  async save(entity: SubcategoryEntity): Promise<SubcategoryEntity> {
     try {
-      const saveCategory = await this.prisma.category.upsert({
+      const saveSubcategory = await this.prisma.subcategory.upsert({
         where: {
           id: entity.id,
         },
         update: {
           title: entity.title,
           description: entity.description,
+          categoryId: entity.categoryId,
         },
         create: {
           id: entity.id,
@@ -31,10 +32,11 @@ export class CategoryRepository implements ICategoryRepository {
           updatedAt: entity.updatedAt,
           title: entity.title,
           description: entity.description,
+          categoryId: entity.categoryId,
         },
       });
 
-      return this.mapCategoryEntity(saveCategory);
+      return this.mapSubcategoryEntity(saveSubcategory);
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();
@@ -43,17 +45,17 @@ export class CategoryRepository implements ICategoryRepository {
 
   async findAll(
     pagination: PaginationDto,
-  ): Promise<IPaginatedData<CategoryEntity>> {
+  ): Promise<IPaginatedData<SubcategoryEntity>> {
     try {
-      const categories = await this.prisma.category.findMany({
+      const subcategories = await this.prisma.subcategory.findMany({
         skip: pagination.getSkip(),
         take: pagination.size,
       });
 
-      const data = categories.map((el) => {
-        return this.mapCategoryEntity(el);
+      const data = subcategories.map((el) => {
+        return this.mapSubcategoryEntity(el);
       });
-      const total = await this.prisma.category.count();
+      const total = await this.prisma.subcategory.count();
 
       return { data, total };
     } catch (err) {
@@ -62,38 +64,40 @@ export class CategoryRepository implements ICategoryRepository {
     }
   }
 
-  async findOne(id: string): Promise<CategoryEntity> {
+  async findOne(id: string): Promise<SubcategoryEntity> {
     try {
-      const category = await this.prisma.category.findUnique({
+      const subcategory = await this.prisma.subcategory.findUnique({
         where: {
           id,
         },
       });
 
-      return this.mapCategoryEntity(category);
+      return this.mapSubcategoryEntity(subcategory);
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();
     }
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.category.delete({
+  async delete(id: string): Promise<string> {
+    await this.prisma.subcategory.delete({
       where: {
         id,
       },
     });
+
+    return 'success';
   }
 
   async findUnique(title: string): Promise<boolean> {
     try {
-      const categoryByTitle = await this.prisma.category.count({
+      const subcategoryByTitle = await this.prisma.subcategory.count({
         where: {
           title,
         },
       });
 
-      if (!categoryByTitle) {
+      if (!subcategoryByTitle) {
         return false;
       }
 
@@ -106,13 +110,13 @@ export class CategoryRepository implements ICategoryRepository {
 
   async exists(id: string): Promise<boolean> {
     try {
-      const category = await this.prisma.category.count({
+      const subcategory = await this.prisma.subcategory.count({
         where: {
           id,
         },
       });
 
-      if (!category) {
+      if (!subcategory) {
         return false;
       }
 
@@ -123,35 +127,8 @@ export class CategoryRepository implements ICategoryRepository {
     }
   }
 
-  async findTree(id: string): Promise<CategoryEntity> {
-    try {
-      const category = await this.prisma.category.findUnique({
-        where: {
-          id,
-        },
-        include: {
-          subcategory: true,
-        },
-      });
 
-      if (!category) {
-        return null;
-      }
-
-      return this.mapCategoryEntity(category);
-    } catch (err) {
-      this.logger.error(err);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  private mapCategoryEntity(payload: IPrismaCategory) {
-    const category = new CategoryEntity(payload);
-
-    if (payload.subcategory.length !== 0) {
-      
-    }
-
-    return category;
+  private mapSubcategoryEntity(payload: IPrismaSubcategory) {
+    return new SubcategoryEntity(payload);
   }
 }

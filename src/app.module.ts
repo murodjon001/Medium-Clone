@@ -5,6 +5,7 @@ import { AuthUserModule } from './bounded-contexts/administration/authentication
 import { AuthorModule } from './bounded-contexts/authors/author.module';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ContentModule } from './bounded-contexts/content/content.module';
 
 @Module({
   imports: [
@@ -26,8 +27,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
         limit: 100,
       },
     ]),
-    AuthUserModule, 
-    AuthorModule],
+    AuthUserModule,
+    AuthorModule,
+    ContentModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

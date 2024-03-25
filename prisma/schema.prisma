@@ -75,7 +75,7 @@ model Subcategory {
 
   title                     String                                   @unique
   description               String?
-  category                  Category                                 @relation(fields: [categoryId], references: [id])
+  category                  Category                                 @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId                String     
   author                    Author[]
 }
