@@ -9,6 +9,7 @@ import { IPaginatedData } from 'src/share/interfaces/IPaginatedData';
 import { ICategoryRepository } from './ICategoryRepository';
 import { CategoryEntity } from 'src/bounded-contexts/content/category/entity/categoty.entity';
 import { IPrismaCategory } from 'src/infrastucture/prisma/interface/IPrismaCategory';
+import { AttachOrSeparateCategoryAuthorDto } from 'src/bounded-contexts/content/category/author/dto/attach-or-separate-category-author.dto';
 
 @Injectable()
 export class CategoryRepository implements ICategoryRepository {
@@ -145,11 +146,47 @@ export class CategoryRepository implements ICategoryRepository {
     }
   }
 
+  async getCategoryByAuthorId(
+    pagination: PaginationDto,
+    authorId: string,
+  ): Promise<IPaginatedData<CategoryEntity>> {
+    try {
+      const categories = await this.prisma.category.findMany({
+        where: {
+          author: {
+            some: {
+              id: authorId,
+            },
+          },
+        },
+        skip: pagination.getSkip(),
+        take: pagination.size,
+      });
+
+      const total = await this.prisma.category.count({
+        where: {
+          author: {
+            some: {
+              id: authorId,
+            },
+          },
+        },
+      });
+      const data = categories.map((el) => {
+        return new CategoryEntity(el);
+      });
+
+      return { data, total };
+    } catch (err) {
+      this.logger.error(err);
+      throw new InternalServerErrorException();
+    }
+  }
+
   private mapCategoryEntity(payload: IPrismaCategory) {
     const category = new CategoryEntity(payload);
 
     if (payload.subcategory.length !== 0) {
-      
     }
 
     return category;

@@ -1,4 +1,5 @@
 import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AttachOrSeparateCategoryAuthorDto } from 'src/bounded-contexts/content/category/author/dto/attach-or-separate-category-author.dto';
 import { PaginationDto } from 'src/share/dtos/pagination.dto';
 import { IPaginatedData } from 'src/share/interfaces/IPaginatedData';
 
@@ -9,4 +10,6 @@ export interface IAuthorRepository {
   findOne(id: string): Promise<AuthorEntity>;
   findAll(pagination: PaginationDto): Promise<IPaginatedData<AuthorEntity>>
   findByConfirmCode(confirmCode: string): Promise<AuthorEntity>
+  connectCategory(dto: AttachOrSeparateCategoryAuthorDto, authorId:string): Promise<void>
+  disconnectCategory(dto: AttachOrSeparateCategoryAuthorDto, authorId: string): Promise<void>
 }

@@ -10,6 +10,7 @@ import { IPrismaAuthor } from '../../interface/IPrismaAuthor';
 import { Password } from 'src/share/value-objects/password-vo';
 import { PaginationDto } from 'src/share/dtos/pagination.dto';
 import { IPaginatedData } from 'src/share/interfaces/IPaginatedData';
+import { AttachOrSeparateCategoryAuthorDto } from 'src/bounded-contexts/content/category/author/dto/attach-or-separate-category-author.dto';
 
 @Injectable()
 export class AuthorRepository implements IAuthorRepository {
@@ -144,6 +145,45 @@ export class AuthorRepository implements IAuthorRepository {
       }
 
       return this.mapAuhtorEntity(author);
+    } catch (err) {
+      this.logger.error(err);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async connectCategory(
+    dto: AttachOrSeparateCategoryAuthorDto,
+    authorId: string
+  ): Promise<void> {
+    try {
+      await this.prisma.author.update({
+        where:{
+          id: authorId
+        },
+        data:{
+          category:{
+            connect: dto.categoryIds.map((el) => {return {id: el}})
+          }
+        }
+      })
+    } catch (err) {
+      this.logger.error(err);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async disconnectCategory(dto: AttachOrSeparateCategoryAuthorDto, authorId: string): Promise<void> {
+    try {
+      await this.prisma.author.update({
+        where:{
+          id: authorId
+        },
+        data:{
+          category:{
+            disconnect: dto.categoryIds.map((el) => {return {id: el}})
+          }
+        }
+      })
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException();

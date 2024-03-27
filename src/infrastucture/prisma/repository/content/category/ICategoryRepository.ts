@@ -10,4 +10,8 @@ export interface ICategoryRepository {
   findUnique(title: string): Promise<boolean>;
   exists(id: string): Promise<boolean>;
   findTree(id: string): Promise<CategoryEntity>;
+  getCategoryByAuthorId(
+    pagination: PaginationDto,
+    authorId: string,
+  ): Promise<IPaginatedData<CategoryEntity>>;
 }

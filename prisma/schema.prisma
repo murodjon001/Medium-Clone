@@ -37,6 +37,7 @@ model Author {
   comment                           Comment[]
   likePost                          LikePost?
   subcategory                       Subcategory[]
+  category                          Category[]
 }
 
 model Post {
@@ -66,6 +67,7 @@ model Category {
   description               String?            
   post                      Post[]
   subcategory               Subcategory[]
+  author                    Author[]
 }
 
 model Subcategory {
