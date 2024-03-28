@@ -1,5 +1,5 @@
 import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
-import { AttachOrSeparateCategoryAuthorDto } from '../dto/attach-or-separate-category-author.dto';
+import { AttachOrSeparateContentDto } from '../../../dto/attach-or-separate-content.dto';
 import { CategoryEntity } from '../../entity/categoty.entity';
 import {
   PaginationDto,
@@ -8,11 +8,11 @@ import {
 
 export interface ICategoryAuthorService {
   attachCategoryAuthor(
-    categoryIds: AttachOrSeparateCategoryAuthorDto,
+    dto: AttachOrSeparateContentDto,
     user: AuthorEntity,
   ): Promise<string>;
   separatingCategoryAuthor(
-    categoryIds: AttachOrSeparateCategoryAuthorDto,
+    dto: AttachOrSeparateContentDto,
     user: AuthorEntity,
   ): Promise<string>;
   getAttachedCategories(

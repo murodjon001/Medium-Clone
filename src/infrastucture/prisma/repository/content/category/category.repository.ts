@@ -9,7 +9,6 @@ import { IPaginatedData } from 'src/share/interfaces/IPaginatedData';
 import { ICategoryRepository } from './ICategoryRepository';
 import { CategoryEntity } from 'src/bounded-contexts/content/category/entity/categoty.entity';
 import { IPrismaCategory } from 'src/infrastucture/prisma/interface/IPrismaCategory';
-import { AttachOrSeparateCategoryAuthorDto } from 'src/bounded-contexts/content/category/author/dto/attach-or-separate-category-author.dto';
 
 @Injectable()
 export class CategoryRepository implements ICategoryRepository {
@@ -186,7 +185,8 @@ export class CategoryRepository implements ICategoryRepository {
   private mapCategoryEntity(payload: IPrismaCategory) {
     const category = new CategoryEntity(payload);
 
-    if (payload.subcategory.length !== 0) {
+    if (payload.subcategory && payload.subcategory.length > 0) {
+      category.setSubcategory(payload.subcategory);
     }
 
     return category;

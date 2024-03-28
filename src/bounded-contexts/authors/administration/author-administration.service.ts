@@ -28,8 +28,10 @@ export class AuthorAdministrationService
   ): Promise<PaginationResponseDto<AuthorDto>> {
     const { data, total } = await this.authorRepository.findAll(pagination);
 
+    const authorDto = data.map((el) => new AuthorDto(el));
+
     return PaginationResponseDto.createFrom({
-      data,
+      data: authorDto,
       total,
       page: pagination.page,
       size: pagination.size,
@@ -44,7 +46,7 @@ export class AuthorAdministrationService
     }
 
     author.blockAuthor();
-    await this.authorRepository.save(author)
-    return 'success'
+    await this.authorRepository.save(author);
+    return 'success';
   }
 }

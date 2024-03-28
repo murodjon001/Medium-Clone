@@ -1,7 +1,7 @@
 import { IsArray, IsNotEmpty } from 'class-validator';
 
-export class AttachOrSeparateCategoryAuthorDto {
+export class AttachOrSeparateContentDto {
   @IsNotEmpty()
   @IsArray()
-  categoryIds: string[];
+  ids: string[];
 }

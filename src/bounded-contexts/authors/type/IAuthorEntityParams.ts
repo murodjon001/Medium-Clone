@@ -5,7 +5,7 @@ export interface IAuthorEntityParams {
   createdAt?: Date;
   updatedAt?: Date;
 
-  email: string;
+  email?: string;
   name: string;
   surname: string;
   aboutAuthor?: string;

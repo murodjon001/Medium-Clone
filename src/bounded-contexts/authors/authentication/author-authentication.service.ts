@@ -61,6 +61,7 @@ export class AuthorAuthenticationService
     const authorEntity = new AuthorEntity({
       email: dto.email,
       name: dto.name,
+      surname: dto.surname,
       password: password,
       isActive: false,
       confirmCode,
@@ -143,7 +144,7 @@ export class AuthorAuthenticationService
     dto: UpdatePasswordDto,
     user: AuthorEntity,
   ): Promise<string> {
-    const author = await this.authorRepository.findOne(user.id)
+    const author = await this.authorRepository.findOne(user.id);
 
     await this.checkPassword(dto, author);
     const updatePassword = await Password.create(dto.newPassword);
@@ -173,7 +174,6 @@ export class AuthorAuthenticationService
     return new AuthorDto(saveAuthor);
   }
 
-
   async forgotPasswordAuthor(dto: ForgotPasswordDto): Promise<string> {
     const author = await this.authorRepository.findByEmail(dto.email);
 
@@ -199,7 +199,7 @@ export class AuthorAuthenticationService
       throw new ForbiddenException('Invalid code!');
     }
     const newPassword = await Password.create(password.resetPassword);
-    author.password = newPassword
+    author.password = newPassword;
 
     await this.authorRepository.save(author);
 

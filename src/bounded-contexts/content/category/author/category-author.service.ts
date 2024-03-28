@@ -3,7 +3,7 @@ import { ICategoryAuthorService } from './type/ICategoryAuthorService';
 import { AuthorRepository } from 'src/infrastucture/prisma/repository/author/author-repository';
 import { CategoryRepository } from 'src/infrastucture/prisma/repository/content/category/category.repository';
 import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
-import { AttachOrSeparateCategoryAuthorDto } from './dto/attach-or-separate-category-author.dto';
+import { AttachOrSeparateContentDto } from '../../dto/attach-or-separate-content.dto';
 import { CategoryEntity } from '../entity/categoty.entity';
 import {
   PaginationDto,
@@ -18,7 +18,7 @@ export class CategoryAuthorService implements ICategoryAuthorService {
   ) {}
 
   async attachCategoryAuthor(
-    dto: AttachOrSeparateCategoryAuthorDto,
+    dto: AttachOrSeparateContentDto,
     user: AuthorEntity,
   ): Promise<string> {
     await this.authorRepository.connectCategory(dto, user.id);
@@ -27,7 +27,7 @@ export class CategoryAuthorService implements ICategoryAuthorService {
   }
 
   async separatingCategoryAuthor(
-    dto: AttachOrSeparateCategoryAuthorDto,
+    dto: AttachOrSeparateContentDto,
     user: AuthorEntity,
   ): Promise<string> {
     await this.authorRepository.disconnectCategory(dto, user.id);

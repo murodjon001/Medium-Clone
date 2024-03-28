@@ -1,6 +1,7 @@
 import { uuid } from 'src/share/tools/uuid';
 import { ICategoryEntityParams } from '../type/ICategoryEntityParams';
 import { SubcategoryEntity } from '../../subcategory/entity/subcategory.entity';
+import { ISubcategoryEntityParams } from '../../subcategory/type/ISubcategoryEntityParams';
 
 export class CategoryEntity {
   id?: string;
@@ -17,5 +18,9 @@ export class CategoryEntity {
 
     this.title = params.title;
     this.description = params.description || undefined;
+  }
+
+  setSubcategory(params: ISubcategoryEntityParams[]): void {
+    this.subcategory = params.map((el) => new SubcategoryEntity(el));
   }
 }

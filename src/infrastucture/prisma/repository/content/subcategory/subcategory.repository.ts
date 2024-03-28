@@ -128,6 +128,44 @@ export class SubcategoryRepository implements ISubcategoryRepository {
   }
 
 
+  async getSubcategoryByAuthorId(
+    pagination: PaginationDto,
+    authorId: string,
+  ): Promise<IPaginatedData<SubcategoryEntity>> {
+    try {
+      const subcategories = await this.prisma.subcategory.findMany({
+        where: {
+          author: {
+            some: {
+              id: authorId,
+            },
+          },
+        },
+        skip: pagination.getSkip(),
+        take: pagination.size,
+      });
+
+      const total = await this.prisma.subcategory.count({
+        where: {
+          author: {
+            some: {
+              id: authorId,
+            },
+          },
+        },
+      });
+      const data = subcategories.map((el) => {
+        return this.mapSubcategoryEntity(el);
+      });
+
+      return { data, total };
+    } catch (err) {
+      this.logger.error(err);
+      throw new InternalServerErrorException();
+    }
+  }
+
+
   private mapSubcategoryEntity(payload: IPrismaSubcategory) {
     return new SubcategoryEntity(payload);
   }

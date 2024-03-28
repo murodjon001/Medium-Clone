@@ -11,4 +11,8 @@ export interface ISubcategoryRepository {
   delete(id: string): Promise<string>;
   findUnique(title: string): Promise<boolean>;
   exists(id: string): Promise<boolean>;
+  getSubcategoryByAuthorId(
+    pagination: PaginationDto,
+    authorId: string,
+  ): Promise<IPaginatedData<SubcategoryEntity>>;
 }
