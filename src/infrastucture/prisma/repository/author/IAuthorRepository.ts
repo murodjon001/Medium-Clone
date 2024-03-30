@@ -1,4 +1,4 @@
-import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AuthorEntity } from 'src/bounded-contexts/blog/authors/entity/author.entity';
 import { AttachOrSeparateContentDto } from 'src/bounded-contexts/content/dto/attach-or-separate-content.dto';
 import { PaginationDto } from 'src/share/dtos/pagination.dto';
 import { IPaginatedData } from 'src/share/interfaces/IPaginatedData';

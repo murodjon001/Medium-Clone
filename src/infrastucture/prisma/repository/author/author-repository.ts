@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { IAuthorRepository } from './IAuthorRepository';
 import { PrismaService } from '../../prisma.service';
-import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AuthorEntity } from 'src/bounded-contexts/blog/authors/entity/author.entity';
 import { IPrismaAuthor } from '../../interface/IPrismaAuthor';
 import { Password } from 'src/share/value-objects/password-vo';
 import { PaginationDto } from 'src/share/dtos/pagination.dto';

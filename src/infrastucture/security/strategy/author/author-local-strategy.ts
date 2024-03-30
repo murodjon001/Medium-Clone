@@ -1,7 +1,7 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthorAuthenticationService } from 'src/bounded-contexts/authors/authentication/author-authentication.service';
+import { AuthorAuthenticationService } from 'src/bounded-contexts/blog/authors/authentication/author-authentication.service';
 
 @Injectable()
 export class AuthorLocalAuthStrategy extends PassportStrategy(
@@ -13,7 +13,6 @@ export class AuthorLocalAuthStrategy extends PassportStrategy(
   }
 
   async validate(email: string, password: string): Promise<any> {
-
     const user = await this.authorService.validateAuthor(email, password);
 
     if (!user) {

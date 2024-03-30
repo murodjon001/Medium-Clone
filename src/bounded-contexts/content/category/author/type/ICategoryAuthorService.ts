@@ -1,4 +1,4 @@
-import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AuthorEntity } from 'src/bounded-contexts/blog/authors/entity/author.entity';
 import { AttachOrSeparateContentDto } from '../../../dto/attach-or-separate-content.dto';
 import { CategoryEntity } from '../../entity/categoty.entity';
 import {

@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { AUTHOR_JWT_CONSTANTS } from '../../constants';
-import { AuthorAuthenticationService } from 'src/bounded-contexts/authors/authentication/author-authentication.service';
+import { AuthorAuthenticationService } from 'src/bounded-contexts/blog/authors/authentication/author-authentication.service';
 
 @Injectable()
 export class AuthorJwtAuthStrategy extends PassportStrategy(

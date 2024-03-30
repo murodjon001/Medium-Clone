@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ICategoryAuthorService } from './type/ICategoryAuthorService';
 import { AuthorRepository } from 'src/infrastucture/prisma/repository/author/author-repository';
 import { CategoryRepository } from 'src/infrastucture/prisma/repository/content/category/category.repository';
-import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AuthorEntity } from 'src/bounded-contexts/blog/authors/entity/author.entity';
 import { AttachOrSeparateContentDto } from '../../dto/attach-or-separate-content.dto';
 import { CategoryEntity } from '../entity/categoty.entity';
 import {

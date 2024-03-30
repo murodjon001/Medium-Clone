@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthorRepository } from 'src/infrastucture/prisma/repository/author/author-repository';
-import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AuthorEntity } from 'src/bounded-contexts/blog/authors/entity/author.entity';
 import { AttachOrSeparateContentDto } from '../../dto/attach-or-separate-content.dto';
 import {
   PaginationDto,

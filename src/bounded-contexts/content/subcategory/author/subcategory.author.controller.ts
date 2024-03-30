@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import { AttachOrSeparateContentDto } from '../../dto/attach-or-separate-content.dto';
 import { GetCurrentUser } from 'src/infrastucture/decorators/get-current-user';
-import { AuthorEntity } from 'src/bounded-contexts/authors/entity/author.entity';
+import { AuthorEntity } from 'src/bounded-contexts/blog/authors/entity/author.entity';
 import { PaginationDto } from 'src/share/dtos/pagination.dto';
 import { AuthorJwtGuard } from 'src/infrastucture/security/guards/author/author-jwt-auth.guard';
 import { SubcategoryAuthorService } from './subcategory.author.service';
